@@ -43,3 +43,14 @@ h6 {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
+#passengerType {
+    border-right: none;
+}
+
+#plusSign {
+    border: 1px solid #ced4da;
+    -webkit-border-radius: 10%;
+    -moz-border-radius: 10%;
+    border-radius: 10%;
+}

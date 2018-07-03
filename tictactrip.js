@@ -59,8 +59,7 @@ function populateSelection(element) {
 
 function getPopularDestinations(startCity) {
     const popularDestQuery = 'http://www-uat.tictactrip.eu/api/cities/popular/from/' + startCity + '/5'
-    const data = callAPI(popularDestQuery);
-    console.log(data);
+    callAPI(popularDestQuery);
 }
 
 function searchQuery(input) {
@@ -78,9 +77,24 @@ function searchQuery(input) {
             li[i].style.display = '';
         } else {
             li[i].style.display = 'none';
-
         }
     }
+}
+
+function addDiscountCode(clickedItem) {
+    const parent = clickedItem.parentElement;
+    parent.removeChild(clickedItem);
+    const input = document.createElement('input');
+    const inputClassAttribute = document.createAttribute('class');
+    const inputTypeAttribute = document.createAttribute('type');
+    const inputPlaceholderAttribute = document.createAttribute('placeholder');
+    inputClassAttribute.value = 'form-control list-input';
+    inputTypeAttribute.value = 'text';
+    inputPlaceholderAttribute.value = 'Discount code or SNCF Bon Voyage voucher';
+    input.setAttributeNode(inputClassAttribute);
+    input.setAttributeNode(inputTypeAttribute);
+    input.setAttributeNode(inputPlaceholderAttribute);
+    parent.appendChild(input);
 }
 
 // TODO: IMPLEMENT CALENDAR FUNCTION

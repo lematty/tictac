@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
     <script src="tictactrip.js"></script>
     <title>Tic Tac Trip</title>
 </head>
@@ -32,14 +33,18 @@
                             <input onclick="launchCalendar()" type="text" class="form-control list-input depart" id="departCalendar" placeholder="&#xf075; Depart">
                             <input onclick="launchCalendar()" type="text" class="form-control list-input arrival" id="arrivalCalendar" placeholder="&#xf075; Return">
                         </div>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control list-input" placeholder="1 Adult (26 - 59)" aria-label="1 Adult (26 - 59)" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <span class="input-group-text" id="basic-addon2">+</span>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control list-input" id="passengerType" value=" 1 Adult (26 - 59)" aria-describedby="basic-addon2">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" id="plusSign" type="button">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
+                            <a href="#" onclick="addDiscountCode(this)">Use a discount code</a>
                         </div>
                         <div>
-                            <a href="#">Use a discount code</a>
                             <button type="button" class="btn btn-success float-right" id="searchButton">Search</button>
                         </div>
                     </form>
