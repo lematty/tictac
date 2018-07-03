@@ -25,8 +25,8 @@
                     <h6 class="card-subtitle mb-2 text-muted">Where can we take you?</h6>
                     <form>
                         <div class="form-group">
-                            <input onkeyup="searchQuery()" type="text" class="form-control list-input depart" id="departStation" placeholder="&#xf075; Enter your departure station....">
-                            <input onkeyup="searchQuery()" type="text" class="form-control list-input arrival" id="arrivalStation" placeholder="&#xf075; Enter your arrival station">
+                            <input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart" id="departStation" placeholder="&#xf075; Enter your departure station....">
+                            <input onkeyup="searchQuery(this)" type="text" class="form-control list-input arrival" id="arrivalStation" placeholder="&#xf075; Enter your arrival station">
                         </div>
                         <div class="form-group">
                             <input onclick="launchCalendar()" type="text" class="form-control list-input depart" id="departCalendar" placeholder="&#xf075; Depart">
@@ -50,7 +50,7 @@
             <div class="card" id="rightCard">
                 <div class="card-body" id="resultsDiv">
                     <h6 class="card-subtitle mb-2 text-muted">Select a departure station</h6>
-                    <!--<ul class="list-group" id="resultList"></ul>-->
+                    <ul class="list-group" id="resultList"></ul>
                 </div>
             </div>
         </div>

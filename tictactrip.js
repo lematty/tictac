@@ -1,5 +1,6 @@
 const baseURL = 'http://www-uat.tictactrip.eu/api/cities/autocomplete/?q=';
 let query = 'P';
+let queryInput = 'departStation';
 
 window.onload = function () {
     const popularCities = 'http://www-uat.tictactrip.eu/api/cities/popular/5';
@@ -21,27 +22,15 @@ function callAPI(url) {
 
 function createResultList(data) {
     const resultCard = document.getElementById('resultsDiv');
-    let ul;
-    if (!document.getElementById('resultList')) {
-        console.log("First creation of UL");
-        ul = document.createElement('ul');
-        const ulIdAttribute = document.createAttribute('id');
-        const ulClassAttribute = document.createAttribute('class');
-        ulIdAttribute.value = 'resultList';
-        ulClassAttribute.value = 'list-group';
-        ul.setAttributeNode(ulIdAttribute);
-        ul.setAttributeNode(ulClassAttribute);
-    } else {
-        console.log("Cleared UL list");
-        ul = document.getElementById('resultList');
-        while (ul.firstChild) {
-            ul.removeChild(ul.firstChild);
-        }
+    let ul = document.getElementById('resultList');
+    while (ul.firstChild) {
+        ul.removeChild(ul.firstChild);
     }
-    let limit5 = data.length;
-    if (limit5 > 5)
-        limit5 = 5;
-    for (let i = 0; i < limit5; i++) {
+    console.log("Cleared UL list");
+    let dataLimit5 = data.length;
+    if (dataLimit5 > 5)
+        dataLimit5 = 5;
+    for (let i = 0; i < dataLimit5; i++) {
         const city = data[i]['unique_name'];
         // const capitalize = city.charAt(0).toUpperCase();
         // capitalize.charAt(0).toUpperCase();
@@ -55,37 +44,28 @@ function createResultList(data) {
         // li.appendChild(document.createTextNode(capitalize + city.slice(1)));
         li.appendChild(document.createTextNode(city));
         ul.appendChild(li);
-        console.log(ul);
     }
     resultCard.appendChild(ul);
-    // console.log(ul);
 }
 
 function populateSelection(element) {
+    console.log(queryInput);
     let selectedCity = element.innerText;
-    const addText = document.getElementById('departStation');
-    addText.placeholder = selectedCity;
-    console.log(addText);
+    const addText = document.getElementById(queryInput);
+    addText.value = selectedCity;
+    // console.log(addText);
     getPopularDestinations(selectedCity);
 }
 
 function getPopularDestinations(startCity) {
-
     const popularDestQuery = 'http://www-uat.tictactrip.eu/api/cities/popular/from/' + startCity + '/5'
     const data = callAPI(popularDestQuery);
     console.log(data);
 }
 
-function searchQuery() {
-    let input;
-    // console.log(typeof document.getElementById('departStation').value);
-    // if (typeof document.getElementById('departStation').value === 'undefined') {
-    input = document.getElementById('departStation');
-    // input = document.getElementById('arrivalStation');
-        console.log('input');
-        console.log(input);
-    // }
+function searchQuery(input) {
     // const filter = input.value.toUpperCase();
+    queryInput = input.id;
     const filter = input.value;
     let fullURL = baseURL + filter;
     callAPI(fullURL);
