@@ -1,21 +1,58 @@
+body {
+    background-color: #bfcfde;
+}
+
 * {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
 h1 {
     margin-top: 50px;
+    color: #FFF;
+}
+
+#title {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+#subtitle {
+    color: #FFF;
+}
+
+#title, #subtitle {
+    color: #FFF;
+    text-shadow: 0px 1px 4px rgba(48, 50, 58, 0.6);
 }
 
 h6 {
     margin-bottom: 50px;
+    font-size: 20px;
+    color: #323E42;
 }
 
+a {
+    color: #01C3A7;
+    font-size: 0.8em;
+}
+
+/*.card-body {*/
+    /*padding: 15%;*/
+/*}*/
+
 #leftCard {
-    margin-left: 20%;
+    margin-left: 5%;
+    margin-right: 2%;
+
 }
 
 #rightCard {
-    margin-right: 20%;
+    margin-left: 2%;
+    margin-right: 5%;
+}
+
+.card-group {
+    margin-bottom: 80px;
 }
 
 #searchButton {
@@ -49,8 +86,55 @@ h6 {
 }
 
 #plusSign {
+    color: #01C3A7;
     border: 1px solid #ced4da;
-    -webkit-border-radius: 10%;
-    -moz-border-radius: 10%;
-    border-radius: 10%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    z-index: -1;
+}
+
+#discountCodeInput {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.fa {
+    color: grey;
+}
+
+.fa-user, .fa-ticket-alt {
+    color: #323E42;
+}
+
+.fa-plus {
+    color: #01C3A7;
+}
+
+.icon {
+    border: 1px solid #ced4da;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.top-icon {
+    border-bottom-left-radius: 0;
+}
+
+.bottom-icon {
+    border-top-left-radius: 0;
+}
+
+#discountIcon {
+    margin-right: -4px;
+}
+
+#passengerBtn {
+    background-color: #FFFFFF;
+    border: 1px solid #ced4da;
+    font-size: 15px;
+}
+
+#viaBtn {
+    background-color: #01C3A7;
 }
