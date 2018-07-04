@@ -38,7 +38,7 @@
                                     </button>
                                 </div>
                                 <input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart"
-                                       id="departStation" onfocus="buildDepartureStation()" placeholder="Enter your departure station....">
+                                       id="departStation" onfocus="buildStationList('Select a departure station')" placeholder="Enter your departure station....">
                             </div>
 
                             <!--Arrival Station-->
@@ -50,7 +50,7 @@
                                     </button>
                                 </div>
                                 <input onkeyup="searchQuery(this)" type="text" class="form-control list-input arrival" id="arrivalStation"
-                                       onfocus="buildArrivalStation()" placeholder="Enter your arrival station">
+                                       onfocus="buildStationList('Select an arrival station')" placeholder="Enter your arrival station">
                             </div>
                         </div>
 
@@ -69,7 +69,7 @@
                                     </button>
                                 </div>
                                 <input type="text" class="form-control list-input depart" id="departCalendar"
-                                       onfocus="setTitle('Select a departure date')" placeholder="Depart">
+                                       onfocus="buildCalendar('Select a departure date')" placeholder="Depart">
                             </div>
 
                             <!--Arrival Date-->
@@ -82,7 +82,7 @@
                                     </button>
                                 </div>
                                 <input type="text" class="form-control list-input arrival" id="arrivalCalendar"
-                                       onfocus="setTitle('Select a return date')" placeholder="Return">
+                                       onfocus="buildCalendar('Select a return date')" placeholder="Return">
                             </div>
                         </div>
 
@@ -98,7 +98,7 @@
                                         <i class="fa fa-user"></i>
                                     </button>
                                 </div>
-                                <input type="text" class="form-control list-input" id="passengerType" onfocus="setTitle('Choose your passengers')"
+                                <input type="text" class="form-control list-input" id="passengerType" onfocus="getPassengerInfo()"
                                        value=" 1 Adult (26 - 59)" aria-describedby="basic-addon2" readonly="readonly">
                                 <div class="input-group-btn">
                                     <button class="btn btn-default" id="plusSign" type="button" onclick="focusElement('passengerType')">
@@ -116,7 +116,7 @@
 
                             <!--Search Bar-->
 
-                            <button type="button" class="btn btn-success float-right" id="searchButton">Search</button>
+                            <button type="button" class="btn btn-success float-right" id="searchButton" onclick="mysteryFunction()">Search</button>
                         </div>
                     </form>
                 </div>

@@ -2,6 +2,9 @@ const baseURL = 'http://www-uat.tictactrip.eu/api/cities/autocomplete/?q=';
 let queryInput = 'departStation'; // Starts with a default of Departing Station
 const popularCities = 'http://www-uat.tictactrip.eu/api/cities/popular/5';
 
+window.onload =function () {
+    buildStationList('Select a departure station');
+};
 
 /*
 Make calls to the API
@@ -20,6 +23,48 @@ function callAPI(url) {
         }
     };
     request.send();
+}
+
+function setTitle(title) {
+    const newTitle = '<h6 class="card-subtitle mb-2" id="rightCardTitle">' + title + '</h6>';
+    const resultsDiv = document.getElementById('resultsDiv');
+    resultsDiv.innerHTML = newTitle;
+}
+
+function focusElement(element) {
+    document.getElementById(element).focus();
+}
+
+function clearResultsDiv() {
+    const resultsDiv = document.getElementById('resultsDiv');
+    while (resultsDiv.firstChild) {
+        resultsDiv.removeChild(resultsDiv.firstChild);
+    }
+}
+
+function buildStationList(title) {
+    clearResultsDiv();
+    setTitle(title);
+    // callAPI(popularCities);
+    switchButtons();
+}
+
+function buildCalendar(title) {
+    clearResultsDiv();
+    setTitle(title);
+}
+
+function switchButtons() {
+    const passengerBtn = document.getElementById('passengerBtn');
+    const viaBtn = document.getElementById('viaBtn');
+    if (passengerBtn) {
+        document.getElementById('resultsDiv').removeChild(passengerBtn);
+    }
+    if (!viaBtn) {
+        const viaBtn = '<button class="btn btn-info float-right" id="viaBtn" type="button"><i class="fa fa-map-marker-alt"></i> VIA</button>';
+        const resultsDiv = document.getElementById('resultsDiv');
+        resultsDiv.innerHTML += viaBtn;
+    }
 }
 
 /*
@@ -92,11 +137,6 @@ function inputSelection(element) {
     }
 }
 
-function setTitle(title) {
-    const rightCardTitle = document.getElementById('rightCardTitle');
-    rightCardTitle.innerText = title;
-}
-
 /*
 Build query of popular destinations from selected city
 Params:
@@ -148,7 +188,9 @@ function addDiscountCode(element) {
     addAttributes(input, 'class', 'form-control list-input');
     addAttributes(input, 'id', 'discountCodeInput');
     addAttributes(input, 'type', 'text');
+    addAttributes(input, 'onfocus', 'buildPassengerBtn()');
     addAttributes(input, 'placeholder', 'Discount code or SNCF Bon Voyage voucher');
+    // const input = '<input class="form-control list-input" id="discountCodeInput" type="text" onfocus="buildPassengerBtn()" placeholder="Discount code or SNCF Bon Voyage voucher">';
 
     // Change styling of passenger type to fit nicely
     document.getElementById('passengerType').style.borderBottomLeftRadius = 0;
@@ -170,73 +212,80 @@ Params:
  */
 
 function discountDivBuilder(parentDiv, input) {
-    const inputGroupDiv = document.createElement('div');
-    const inputGroupBtnDiv = document.createElement('div');
-    const btn = document.createElement('button');
-    const icon = document.createElement('i');
-    addAttributes(inputGroupDiv, 'class', 'input-group');
-    addAttributes(inputGroupBtnDiv, 'class', 'input-group-btn');
-    // Create icon
-    addAttributes(btn, 'class', 'btn btn-default icon bottom-icon');
-    addAttributes(btn, 'type', 'button');
-    addAttributes(btn, 'onclick', 'focusElement(\'discountCodeInput\')');
-    addAttributes(icon, 'class', 'fa fa-ticket-alt');
-    addAttributes(icon, 'id', 'discountIcon');
-
-    // Build div structure
-    inputGroupDiv.appendChild(inputGroupBtnDiv);
-    inputGroupBtnDiv.appendChild(btn);
-    btn.appendChild(icon);
-    parentDiv.appendChild(inputGroupDiv);
-    inputGroupDiv.appendChild(input).focus();
-
+    clearResultsDiv();
+    const userInfoDiv = document.getElementById('userInfo');
+    while (userInfoDiv.firstChild) {
+        userInfoDiv.removeChild(userInfoDiv.firstChild);
+    }
+    const buildUserInfoInnerHTML =
+        '<div class="input-group">' +
+            '<div class="input-group-btn">' +
+                '<button class="btn btn-default icon top-icon" id="userIcon" type="button" onclick="focusElement(\'passengerType\')">' +
+                    '<i class="fa fa-user"></i>' +
+                '</button>' +
+            '</div>' +
+            '<input type="text" class="form-control list-input" id="passengerType" onfocus="getPassengerInfo()" value=" 1 Adult (26 - 59)" aria-describedby="basic-addon2" readonly="readonly" style="border-bottom-left-radius: 0px;">' +
+            '<div class="input-group-btn">' +
+                '<button class="btn btn-default" id="plusSign" type="button" onclick="focusElement(\'passengerType\')" style="border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;">' +
+                    '<i class="fa fa-plus"></i>' +
+                '</button>' +
+            '</div>' +
+        '</div>' +
+        '<div class="input-group">' +
+            '<div class="input-group-btn">' +
+                '<button class="btn btn-default icon bottom-icon" type="button" onclick="focusElement(\'discountCodeInput\')">' +
+                    '<i class="fa fa-ticket-alt" id="discountIcon"></i>' +
+                '</button>' +
+            '</div>' +
+            '<input class="form-control list-input" id="discountCodeInput" type="text" onfocus="buildPassengerBtn()" placeholder="Discount code or SNCF Bon Voyage voucher">' +
+        '</div>';
+    userInfoDiv.innerHTML = buildUserInfoInnerHTML;
     // Build right card
+    buildPassengerBtn();
+}
+
+function buildPassengerBtn() {
+    clearResultsDiv();
     setTitle('The discount will be applied to');
-    const passengerBtn = document.createElement('button');
-    addAttributes(passengerBtn, 'class', 'btn btn-light btn-lg btn-block text-left');
-    addAttributes(passengerBtn, 'id', 'passengerBtn');
-    addAttributes(passengerBtn, 'type', 'button');
-    passengerBtn.innerText = 'Passenger 1 (Adult)';
+
+    const passengerBtn = [
+        '<h6 class="card-subtitle mb-2" id="rightCardTitle">The discount will be applied to</h6>',
+        '<button class="btn btn-light btn-lg btn-block text-left" id="passengerBtn" type="button" ',
+        'onfocus="buildPassengerBtn(this)"><i class="fa fa-check"></i> Passenger 1 <span style="color: grey">(Adult)</span></button>'
+    ].join('');
     const resultsDiv = document.getElementById('resultsDiv');
-    resultsDiv.appendChild(passengerBtn);
-    resultsDiv.removeChild(document.getElementById('viaBtn'));
+    resultsDiv.innerHTML = passengerBtn;
 }
 
-function focusElement(element) {
-    document.getElementById(element).focus();
+function getPassengerInfo() {
+    const passengerDropdown = [
+        '<h6 class="card-subtitle mb-2" id="rightCardTitle">Choose your passengers</h6>',
+        '<div class="text-center">',
+            '<div class="btn-group"  id="passengerInfoBtn" role="group" aria-label="Button group with nested dropdown">',
+                '<div class="btn-group" role="group">',
+                    '<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Adult (26 - 59)</button>',
+                    '<div class="dropdown-menu" id="dropDown" aria-labelledby="btnGroupDrop1">',
+                        '<a class="dropdown-item" href="#">Youth (0 - 25)</a>',
+                        '<a class="dropdown-item" href="#">Adult (26 - 59)</a>',
+                        '<a class="dropdown-item" href="#">Senior (60+)</a>',
+                    '</div>',
+                '</div>',
+                '<button type="button" class="btn btn-light" id="loyaltyBtn">Loyalty & discount cards</button>',
+            '</div>',
+        '</div>',
+        '<button class="btn btn-light btn-lg btn-block" id="addPassenger" type="button"><i class="fa fa-user-plus"></i> ADD ANOTHER PASSENGER</button>',
+        '<h6 id="looking">Looking for your saved passengers?</h6>',
+        '<p>Sign in to your account and retrieve the passengers that you saved during previous searches.</p>',
+        '<button class="btn btn-light btn-lg text-left" id="signInBtn" type="button" disabled><i class="fa fa-sign-in-alt" id="signInIcon"></i> SIGN IN</button>'
+    ].join('');
+
+    const resultsList = document.getElementById('resultsDiv');
+    resultsList.innerHTML = passengerDropdown;
 }
 
-function buildDepartureStation() {
-    setTitle('Select a departure station');
-    // callAPI(popularCities);
-    switchButtons();
+function mysteryFunction() {
+    alert("Thanks for looking at my work!!!");
 }
-
-function buildArrivalStation() {
-    setTitle('Select an arrival station');
-    // callAPI(popularCities);
-    switchButtons();
-}
-
-function switchButtons() {
-    const passengerBtn = document.getElementById('passengerBtn');
-    if (passengerBtn) {
-        document.getElementById('resultsDiv').removeChild(passengerBtn);
-    }
-    if (!document.getElementById('viaBtn')) {
-        const viaBtn = document.createElement('button');
-        addAttributes(viaBtn, 'class', 'btn btn-info float-right');
-        addAttributes(viaBtn, 'id', 'viaBtn');
-        addAttributes(viaBtn, 'type', 'button');
-        viaBtn.innerText = 'VIA';
-        const resultsDiv = document.getElementById('resultsDiv');
-        resultsDiv.appendChild(viaBtn);
-    }
-}
-
-// function removeButtons() {
-//
-// }
 
 
 
