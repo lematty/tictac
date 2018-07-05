@@ -45,7 +45,7 @@ function clearResultsDiv() {
 function buildStationList(title) {
     clearResultsDiv();
     setTitle(title);
-    // callAPI(popularCities);
+    callAPI(popularCities);
     switchButtons();
 }
 
@@ -57,13 +57,19 @@ function buildCalendar(title) {
 function switchButtons() {
     const passengerBtn = document.getElementById('passengerBtn');
     const viaBtn = document.getElementById('viaBtn');
-    if (passengerBtn) {
-        document.getElementById('resultsDiv').removeChild(passengerBtn);
+    const removeViaBtn = document.getElementById('removeViaBtn');
+    const resultsDiv = document.getElementById('resultsDiv');
+    if (removeViaBtn) {
+        resultsDiv.removeChild(removeViaBtn);
     }
+    if (passengerBtn)
+        resultsDiv.removeChild(passengerBtn);
     if (!viaBtn) {
-        const viaBtn = '<button class="btn btn-info float-right" id="viaBtn" type="button"><i class="fa fa-map-marker-alt"></i> VIA</button>';
-        const resultsDiv = document.getElementById('resultsDiv');
+        const viaBtn = '<button class="btn btn-info float-right" id="viaBtn" type="button" onclick="buildVia()"><i class="fa fa-map-marker-alt"></i> VIA</button>';
+        console.log(resultsDiv.innerHTML);
         resultsDiv.innerHTML += viaBtn;
+        console.log(resultsDiv.innerHTML);
+
     }
 }
 
@@ -74,11 +80,12 @@ Params:
  */
 
 function createResultList(data) {
-    const resultCard = document.getElementById('resultsDiv');
-    let ul = document.getElementById('resultList');
-    while (ul.firstChild) {
-        ul.removeChild(ul.firstChild);
-    }
+    const resultDiv = document.getElementById('resultsDiv');
+    console.log(resultDiv);
+    clearResultsDiv();
+    const resultList = document.createElement('UL');
+    addAttributes(resultList, 'id', 'resultList');
+    addAttributes(resultList, 'class', 'list-group');
     console.log("Cleared UL list");
     let dataLimit5 = data.length;
     if (dataLimit5 > 5)
@@ -91,9 +98,52 @@ function createResultList(data) {
         addAttributes(li, 'class', 'list-group-item list-group-item-action');
         addAttributes(li, 'onclick', 'inputSelection(this)');
         li.appendChild(document.createTextNode(city));
-        ul.appendChild(li);
+        resultList.appendChild(li);
     }
-    resultCard.appendChild(ul);
+    resultDiv.appendChild(resultList);
+}
+
+function buildVia() {
+    const beforeVia = document.getElementById('beforeVia');
+    const viaParent = beforeVia.parentElement;
+    const viaElement = [
+    '<div class="input-group" id="beforeVia">\n' +
+        '<div class="input-group-btn">\n' +
+            '<button class="btn btn-default icon top-icon" id="departIcon" type="button" onclick="focusElement(\'departStation\')">\n' +
+                '<i class="fa fa-sign-out-alt"></i>\n' +
+            '</button>\n' +
+        '</div>\n' +
+            '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart"\n' +
+            'id="departStation" onfocus="buildStationList(\'Select a departure station\')" placeholder="Enter your departure station....">\n' +
+        '</div>\n' +
+        '<div class="input-group">\n' +
+            '<div class="input-group-btn">\n' +
+                '<button class="btn btn-default icon" id="viaIcon" type="button" onclick="focusElement(\'viaStation\')">\n' +
+                    '<i class="fa fa-dot-circle"></i>\n' +
+                '</button>\n' +
+            '</div>\n' +
+            '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart"\n' +
+            'id="viaStation" onfocus="buildStationList(\'Select a via station\')" placeholder="Via">\n' +
+        '</div>\n' +
+        '<div class="input-group">\n' +
+            '<div class="input-group-btn">\n' +
+                '<button class="btn btn-default icon bottom-icon" id="returnIcon" type="button" onclick="focusElement(\'arrivalStation\')">\n' +
+                    '<i class="fa fa-sign-in-alt"></i>\n' +
+                '</button>\n' +
+            '</div>\n' +
+            '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input arrival" id="arrivalStation"\n' +
+            '                                       onfocus="buildStationList(\'Select an arrival station\')" placeholder="Enter your arrival station">\n' +
+        '</div>\n' +
+    '</div>'
+    ].join('');
+    clearResultsDiv();
+    setTitle('Select a via station');
+    const resultsList = document.getElementById('resultsDiv');
+
+    const removeViaBtn = '<button type="button" class="btn btn-secondary float-right" id="removeViaBtn" onclick="switchButtons()">REMOVE VIA STATION</button>';
+    callAPI();
+    resultsList.innerHTML += removeViaBtn;
+    viaParent.innerHTML = viaElement;
 }
 
 /*
@@ -145,7 +195,7 @@ Params:
 
 function getPopularDestinations(city) {
     const popularDestQuery = 'http://www-uat.tictactrip.eu/api/cities/popular/from/' + city + '/5'
-    // callAPI(popularDestQuery);
+    callAPI(popularDestQuery);
 }
 
 /*
@@ -159,7 +209,7 @@ function searchQuery(element) {
     queryInput = element.id;
     const filter = element.value;
     let fullURL = baseURL + filter;
-    // callAPI(fullURL);
+    callAPI(fullURL);
     const ul = document.getElementById('resultList');
     const li = ul.getElementsByTagName('li');
 

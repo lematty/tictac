@@ -121,12 +121,16 @@ a {
     border-bottom-right-radius: 0;
 }
 
-.top-icon {
+.top-icon, #viaIcon {
     border-bottom-left-radius: 0;
 }
 
-.bottom-icon {
+.bottom-icon, #viaIcon {
     border-top-left-radius: 0;
+}
+
+#viaStation {
+    border-top-right-radius: 0;
 }
 
 #discountIcon {
