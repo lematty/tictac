@@ -164,3 +164,18 @@ a {
 #looking {
     font-size: 1.3em;
 }
+
+table {
+    /*margin: auto;*/
+    width: 100%;
+    border: 1px solid #ced4da;
+    padding-bottom: 50px;
+    border-collapse: separate;
+    -webkit-border-radius: 0.5ex;
+    -moz-border-radius: 0.5ex;
+    border-radius: 0.5ex;
+}
+
+#btnPrev, #btnNext {
+    background-color: #FFFFFF;
+}

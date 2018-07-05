@@ -26,6 +26,7 @@ function callAPI(url) {
 }
 
 function setTitle(title) {
+    clearResultsDiv();
     const newTitle = '<h6 class="card-subtitle mb-2" id="rightCardTitle">' + title + '</h6>';
     const resultsDiv = document.getElementById('resultsDiv');
     resultsDiv.innerHTML = newTitle;
@@ -43,15 +44,36 @@ function clearResultsDiv() {
 }
 
 function buildStationList(title) {
-    clearResultsDiv();
+    const resultsDiv = document.getElementById('resultsDiv');
+    console.log(resultsDiv);
     setTitle(title);
     callAPI(popularCities);
-    switchButtons();
 }
 
 function buildCalendar(title) {
-    clearResultsDiv();
+    // clearResultsDiv();
     setTitle(title);
+    const calendar = [
+        '<div class="calendar-wrapper text-center">\n' +
+            '<button id="btnPrev" type="button"><</button>\n' +
+            '<button id="btnNext" type="button">></button>\n' +
+            '<div id="divCal"></div>\n' +
+        '</div>'
+    ].join('');
+    const resultsDiv = document.getElementById('resultsDiv');
+    resultsDiv.innerHTML += calendar;
+
+    // Start calendar
+    var c = new Cal("divCal");
+    c.showcurr();
+
+    // Bind next and previous button clicks
+    getId('btnNext').onclick = function() {
+        c.nextMonth();
+    };
+    getId('btnPrev').onclick = function() {
+        c.previousMonth();
+    };
 }
 
 function switchButtons() {
@@ -65,10 +87,10 @@ function switchButtons() {
     if (passengerBtn)
         resultsDiv.removeChild(passengerBtn);
     if (!viaBtn) {
-        const viaBtn = '<button class="btn btn-info float-right" id="viaBtn" type="button" onclick="buildVia()"><i class="fa fa-map-marker-alt"></i> VIA</button>';
-        console.log(resultsDiv.innerHTML);
+        const viaBtn = '<button class="btn btn-info float-right mt-3" id="viaBtn" type="button" onclick="buildVia()"><i class="fa fa-map-marker-alt"></i> VIA</button>';
+        // console.log(resultsDiv.innerHTML);
         resultsDiv.innerHTML += viaBtn;
-        console.log(resultsDiv.innerHTML);
+        // console.log(resultsDiv);
 
     }
 }
@@ -81,8 +103,7 @@ Params:
 
 function createResultList(data) {
     const resultDiv = document.getElementById('resultsDiv');
-    console.log(resultDiv);
-    clearResultsDiv();
+    // clearResultsDiv();
     const resultList = document.createElement('UL');
     addAttributes(resultList, 'id', 'resultList');
     addAttributes(resultList, 'class', 'list-group');
@@ -100,7 +121,9 @@ function createResultList(data) {
         li.appendChild(document.createTextNode(city));
         resultList.appendChild(li);
     }
+    // setTitle(title);
     resultDiv.appendChild(resultList);
+    switchButtons();
 }
 
 function buildVia() {
@@ -132,18 +155,19 @@ function buildVia() {
                 '</button>\n' +
             '</div>\n' +
             '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input arrival" id="arrivalStation"\n' +
-            '                                       onfocus="buildStationList(\'Select an arrival station\')" placeholder="Enter your arrival station">\n' +
+                'onfocus="buildStationList(\'Select an arrival station\')" placeholder="Enter your arrival station">\n' +
         '</div>\n' +
     '</div>'
     ].join('');
     clearResultsDiv();
     setTitle('Select a via station');
-    const resultsList = document.getElementById('resultsDiv');
+    const resultsDiv = document.getElementById('resultsDiv');
 
     const removeViaBtn = '<button type="button" class="btn btn-secondary float-right" id="removeViaBtn" onclick="switchButtons()">REMOVE VIA STATION</button>';
-    callAPI();
-    resultsList.innerHTML += removeViaBtn;
     viaParent.innerHTML = viaElement;
+    resultsDiv.innerHTML += removeViaBtn;
+    const viaStation = document.getElementById('viaStation');
+    viaStation.focus();
 }
 
 /*
@@ -167,15 +191,27 @@ Params:
  */
 
 function inputSelection(element) {
+
+    const resultDiv = document.getElementById('resultsDiv');
+    // console.log(resultDiv);
+    // clearResultsDiv();
+    // console.log(resultDiv);
     let selectedCity = element.innerText;
     const addText = document.getElementById(queryInput);
     addText.value = selectedCity;
+    // console.log(selectedCity);
+    console.log(element);
     const arrivalStation = document.getElementById('arrivalStation');
     const departStation = document.getElementById('departStation');
-    getPopularDestinations(selectedCity);
+    // setTitle('This is the title');
+    // getPopularDestinations(selectedCity);
+    // console.log(resultDiv);
+
     if (queryInput === 'departStation') {
         arrivalStation.focus();
         queryInput = 'arrivalStation';
+        setTitle('Select an arrival station');
+        getPopularDestinations(selectedCity);
     } else {
         if (arrivalStation.value) {
             const chooseDate = document.getElementById('departCalendar');
@@ -185,6 +221,7 @@ function inputSelection(element) {
         }
         queryInput = 'departStation';
     }
+    // clearResultsDiv();
 }
 
 /*
@@ -205,6 +242,7 @@ Params:
  */
 
 function searchQuery(element) {
+    clearResultsDiv();
     // const filter = input.value.toUpperCase();
     queryInput = element.id;
     const filter = element.value;
@@ -251,7 +289,7 @@ function addDiscountCode(element) {
 
     // Get parent div and build child divs to append discount code input
     const parentDiv = document.getElementById('userInfo');
-    discountDivBuilder(parentDiv, input);
+    discountDivBuilder();
 }
 
 /*
@@ -261,7 +299,7 @@ Params:
     input     - (HTML Element) new input HTML element that will be appended before giving to parent div
  */
 
-function discountDivBuilder(parentDiv, input) {
+function discountDivBuilder() {
     clearResultsDiv();
     const userInfoDiv = document.getElementById('userInfo');
     while (userInfoDiv.firstChild) {
@@ -323,7 +361,7 @@ function getPassengerInfo() {
                 '<button type="button" class="btn btn-light" id="loyaltyBtn">Loyalty & discount cards</button>',
             '</div>',
         '</div>',
-        '<button class="btn btn-light btn-lg btn-block" id="addPassenger" type="button"><i class="fa fa-user-plus"></i> ADD ANOTHER PASSENGER</button>',
+        '<button class="btn btn-light btn-lg btn-block mt-3" id="addPassenger" type="button"><i class="fa fa-user-plus"></i> ADD ANOTHER PASSENGER</button>',
         '<h6 id="looking">Looking for your saved passengers?</h6>',
         '<p>Sign in to your account and retrieve the passengers that you saved during previous searches.</p>',
         '<button class="btn btn-light btn-lg text-left" id="signInBtn" type="button" disabled><i class="fa fa-sign-in-alt" id="signInIcon"></i> SIGN IN</button>'
@@ -337,10 +375,149 @@ function mysteryFunction() {
     alert("Thanks for looking at my work!!!");
 }
 
+/////////////////////////////////////////////////////////////////////
+//           Thanks XMARK @ codepen.io for the calendar            //
+/////////////////////////////////////////////////////////////////////
+
+let Cal = function(divId) {
+
+    //Store div id
+    this.divId = divId;
+
+    // Days of week, starting on Sunday
+    this.DaysOfWeek = [
+        'Sun',
+        'Mon',
+        'Tue',
+        'Wed',
+        'Thu',
+        'Fri',
+        'Sat'
+    ];
+
+    // Months, stating on January
+    this.Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+    // Set the current month, year
+    let d = new Date();
+
+    this.currMonth = d.getMonth();
+    this.currYear = d.getFullYear();
+    this.currDay = d.getDate();
+
+};
+
+// Goes to next month
+Cal.prototype.nextMonth = function() {
+    if ( this.currMonth === 11 ) {
+        this.currMonth = 0;
+        this.currYear = this.currYear + 1;
+    }
+    else {
+        this.currMonth = this.currMonth + 1;
+    }
+    this.showcurr();
+};
+
+// Goes to previous month
+Cal.prototype.previousMonth = function() {
+    if ( this.currMonth === 0 ) {
+        this.currMonth = 11;
+        this.currYear = this.currYear - 1;
+    }
+    else {
+        this.currMonth = this.currMonth - 1;
+    }
+    this.showcurr();
+};
+
+// Show current month
+Cal.prototype.showcurr = function() {
+    this.showMonth(this.currYear, this.currMonth);
+};
+
+// Show month (year, month)
+Cal.prototype.showMonth = function(y, m) {
+
+    let d = new Date()
+        // First day of the week in the selected month
+        , firstDayOfMonth = new Date(y, m, 1).getDay()
+        // Last day of the selected month
+        , lastDateOfMonth =  new Date(y, m+1, 0).getDate()
+        // Last day of the previous month
+        , lastDayOfLastMonth = m === 0 ? new Date(y-1, 11, 0).getDate() : new Date(y, m, 0).getDate();
 
 
-// TODO: IMPLEMENT CALENDAR FUNCTION
+    let html = '<table>';
 
-// function launchCalendar() {
-//
-// }
+    // Write selected month and year
+    html += '<thead><tr>';
+    html += '<td colspan="7">' + this.Months[m] + ' ' + y + '</td>';
+    html += '</tr></thead>';
+
+
+    // Write the header of the days of the week
+    html += '<tr class="days">';
+    for(let i=0; i < this.DaysOfWeek.length;i++) {
+        html += '<td>' + this.DaysOfWeek[i] + '</td>';
+    }
+    html += '</tr>';
+
+    // Write the days
+    let i=1;
+    do {
+
+        let dow = new Date(y, m, i).getDay();
+
+        // If Sunday, start new row
+        if ( dow === 0 ) {
+            html += '<tr>';
+        }
+        // If not Sunday but first day of the month
+        // it will write the last days from the previous month
+        else if ( i === 1 ) {
+            html += '<tr>';
+            let k = lastDayOfLastMonth - firstDayOfMonth+1;
+            for(let j=0; j < firstDayOfMonth; j++) {
+                html += '<td class="not-current">' + k + '</td>';
+                k++;
+            }
+        }
+
+        // Write the current day in the loop
+        let chk = new Date();
+        let chkY = chk.getFullYear();
+        let chkM = chk.getMonth();
+        if (chkY === this.currYear && chkM === this.currMonth && i === this.currDay) {
+            html += '<td class="today">' + i + '</td>';
+        } else {
+            html += '<td class="normal">' + i + '</td>';
+        }
+        // If Saturday, closes the row
+        if ( dow === 6 ) {
+            html += '</tr>';
+        }
+        // If not Saturday, but last day of the selected month
+        // it will write the next few days from the next month
+        else if ( i === lastDateOfMonth ) {
+            let k=1;
+            for(dow; dow < 6; dow++) {
+                html += '<td class="not-current">' + k + '</td>';
+                k++;
+            }
+        }
+        i++;
+    }while(i <= lastDateOfMonth);
+
+    // Closes table
+    html += '</table>';
+
+    // Write HTML to the div
+    document.getElementById(this.divId).innerHTML = html;
+};
+
+// Get element by id
+function getId(id) {
+    return document.getElementById(id);
+}
+
