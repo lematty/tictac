@@ -55,8 +55,6 @@ function buildCalendar(title) {
     setTitle(title);
     const calendar = [
         '<div class="calendar-wrapper text-center">\n' +
-            '<button id="btnPrev" type="button"><</button>\n' +
-            '<button id="btnNext" type="button">></button>\n' +
             '<div id="divCal"></div>\n' +
         '</div>'
     ].join('');
@@ -452,7 +450,7 @@ Cal.prototype.showMonth = function(y, m) {
 
     // Write selected month and year
     html += '<thead><tr>';
-    html += '<td colspan="7">' + this.Months[m] + ' ' + y + '</td>';
+    html += '<td colspan="7" id="tableHead">' + '<button id="btnPrev"><</button>' + this.Months[m] + ' ' + y + '<button id="btnNext">></button></td>';
     html += '</tr></thead>';
 
 
