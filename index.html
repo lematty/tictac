@@ -33,24 +33,24 @@
 
                             <div class="input-group" id="beforeVia">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default icon top-icon" id="departIcon" type="button" onclick="focusElement('departStation')">
+                                    <button class="btn btn-default icon top-icon" id="departIcon" type="button" onclick="buildStationList('Select a departure station')">
                                         <i class="fa fa-sign-out-alt"></i>
                                     </button>
                                 </div>
                                 <input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart"
-                                       id="departStation" onfocus="buildStationList('Select a departure station')" placeholder="Enter your departure station....">
+                                       onclick="buildStationList('Select a departure station')" id="departStation" placeholder="Enter your departure station....">
                             </div>
 
                             <!--Arrival Station-->
 
                             <div class="input-group">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default icon bottom-icon" id="returnIcon" type="button" onclick="focusElement('arrivalStation')">
+                                    <button class="btn btn-default icon bottom-icon" id="returnIcon" type="button" onclick="buildStationList('Select an arrival station')">
                                         <i class="fa fa-sign-in-alt"></i>
                                     </button>
                                 </div>
                                 <input onkeyup="searchQuery(this)" type="text" class="form-control list-input arrival" id="arrivalStation"
-                                       placeholder="Enter your arrival station">
+                                       onclick="buildStationList('Select an arrival station')" placeholder="Enter your arrival station">
                             </div>
                         </div>
 
@@ -122,12 +122,12 @@
                 </div>
             </div>
 
-            <!--Result List to be populated-->
+            <!--Result Div to be populated-->
 
             <div class="card">
                 <div class="card-body" id="resultsDiv">
                     <h6 class="card-subtitle mb-2" id="rightCardTitle">Select a departure station</h6>
-                    <ul class="list-group" id="resultList"></ul>
+                    <!--<ul class="list-group" id="resultList"></ul>-->
                 </div>
             </div>
         </div>

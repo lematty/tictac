@@ -2,7 +2,7 @@ const baseURL = 'http://www-uat.tictactrip.eu/api/cities/autocomplete/?q=';
 let queryInput = 'departStation'; // Starts with a default of Departing Station
 const popularCities = 'http://www-uat.tictactrip.eu/api/cities/popular/5';
 
-window.onload =function () {
+window.onload = function () {
     buildStationList('Select a departure station');
 };
 
@@ -25,6 +25,12 @@ function callAPI(url) {
     request.send();
 }
 
+/*
+Sets the title as first element at #resultsDiv
+Params:
+    title    - (String) title of right card
+ */
+
 function setTitle(title) {
     clearResultsDiv();
     const newTitle = '<h6 class="card-subtitle mb-2" id="rightCardTitle">' + title + '</h6>';
@@ -32,9 +38,18 @@ function setTitle(title) {
     resultsDiv.innerHTML = newTitle;
 }
 
+/*
+Adds focus to element passed as parameter
+Params:
+    element    - (HTML element) adds focus to HTML element
+ */
+
 function focusElement(element) {
     document.getElementById(element).focus();
 }
+
+
+// Clears #resultsDiv to prepare for building its elements
 
 function clearResultsDiv() {
     const resultsDiv = document.getElementById('resultsDiv');
@@ -43,15 +58,24 @@ function clearResultsDiv() {
     }
 }
 
+/*
+Builds list of stations for depart, via, and arrival inputs
+Params:
+    title    - (String) title of right card
+ */
+
 function buildStationList(title) {
-    const resultsDiv = document.getElementById('resultsDiv');
-    console.log(resultsDiv);
     setTitle(title);
     callAPI(popularCities);
 }
 
+/*
+Builds the calendar for departing and arrival dates
+Params:
+    title    - (String) title of right card
+ */
+
 function buildCalendar(title) {
-    // clearResultsDiv();
     setTitle(title);
     const calendar = [
         '<div class="calendar-wrapper text-center">\n' +
@@ -74,22 +98,18 @@ function buildCalendar(title) {
     };
 }
 
+// Switches the buttons in #resultsDiv between via, remove via, and passenger
+
 function switchButtons() {
     const passengerBtn = document.getElementById('passengerBtn');
     const viaBtn = document.getElementById('viaBtn');
     const removeViaBtn = document.getElementById('removeViaBtn');
     const resultsDiv = document.getElementById('resultsDiv');
-    if (removeViaBtn) {
-        resultsDiv.removeChild(removeViaBtn);
-    }
-    if (passengerBtn)
-        resultsDiv.removeChild(passengerBtn);
+    if (removeViaBtn) resultsDiv.removeChild(removeViaBtn);
+    if (passengerBtn) resultsDiv.removeChild(passengerBtn);
     if (!viaBtn) {
         const viaBtn = '<button class="btn btn-info float-right mt-3" id="viaBtn" type="button" onclick="buildVia()"><i class="fa fa-map-marker-alt"></i> VIA</button>';
-        // console.log(resultsDiv.innerHTML);
         resultsDiv.innerHTML += viaBtn;
-        // console.log(resultsDiv);
-
     }
 }
 
@@ -101,28 +121,36 @@ Params:
 
 function createResultList(data) {
     const resultDiv = document.getElementById('resultsDiv');
-    // clearResultsDiv();
     const resultList = document.createElement('UL');
     addAttributes(resultList, 'id', 'resultList');
     addAttributes(resultList, 'class', 'list-group');
-    console.log("Cleared UL list");
+
+    // displays only top 5 names of response to keep page manageable
     let dataLimit5 = data.length;
-    if (dataLimit5 > 5)
-        dataLimit5 = 5;
+    if (dataLimit5 > 5) dataLimit5 = 5;
+
     for (let i = 0; i < dataLimit5; i++) {
         const city = data[i]['unique_name'];
-        // const capitalize = city.charAt(0).toUpperCase();
-        // capitalize.charAt(0).toUpperCase();
+        const capitalized = capitalizeWords(city);
         const li = document.createElement('li');
         addAttributes(li, 'class', 'list-group-item list-group-item-action');
         addAttributes(li, 'onclick', 'inputSelection(this)');
-        li.appendChild(document.createTextNode(city));
+        li.appendChild(document.createTextNode(capitalized));
         resultList.appendChild(li);
     }
-    // setTitle(title);
     resultDiv.appendChild(resultList);
     switchButtons();
 }
+
+function capitalizeWords(city){
+    city.toLowerCase();
+    return city.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
+        function(firstLetter){
+            return firstLetter.toUpperCase();
+        });
+}
+
+// Builds the via input between depart and arrival station inputs
 
 function buildVia() {
     const beforeVia = document.getElementById('beforeVia');
@@ -157,14 +185,15 @@ function buildVia() {
         '</div>\n' +
     '</div>'
     ].join('');
-    clearResultsDiv();
     setTitle('Select a via station');
     const resultsDiv = document.getElementById('resultsDiv');
 
-    const removeViaBtn = '<button type="button" class="btn btn-secondary float-right" id="removeViaBtn" onclick="switchButtons()">REMOVE VIA STATION</button>';
+    // Adds #removeViaBtn button to #resultsDiv card after via was clicked
+    const removeViaBtn = '<button type="button" class="btn btn-secondary float-right" id="removeViaBtn" onclick="removeViaButton()">REMOVE VIA STATION</button>';
     viaParent.innerHTML = viaElement;
     resultsDiv.innerHTML += removeViaBtn;
     const viaStation = document.getElementById('viaStation');
+    // Put focus on via station after via button was clicked
     viaStation.focus();
 }
 
@@ -189,21 +218,12 @@ Params:
  */
 
 function inputSelection(element) {
-
-    const resultDiv = document.getElementById('resultsDiv');
-    // console.log(resultDiv);
-    // clearResultsDiv();
-    // console.log(resultDiv);
+    clearResultsDiv();
     let selectedCity = element.innerText;
     const addText = document.getElementById(queryInput);
     addText.value = selectedCity;
-    // console.log(selectedCity);
-    console.log(element);
     const arrivalStation = document.getElementById('arrivalStation');
     const departStation = document.getElementById('departStation');
-    // setTitle('This is the title');
-    // getPopularDestinations(selectedCity);
-    // console.log(resultDiv);
 
     if (queryInput === 'departStation') {
         arrivalStation.focus();
@@ -219,7 +239,6 @@ function inputSelection(element) {
         }
         queryInput = 'departStation';
     }
-    // clearResultsDiv();
 }
 
 /*
@@ -234,14 +253,13 @@ function getPopularDestinations(city) {
 }
 
 /*
-Generic attribute builder
+Checks search results for each letter user inputs and returns suggested results to #resultsDiv
 Params:
     element - (HTML Element) HTML element that was selected
  */
 
 function searchQuery(element) {
     clearResultsDiv();
-    // const filter = input.value.toUpperCase();
     queryInput = element.id;
     const filter = element.value;
     let fullURL = baseURL + filter;
@@ -250,7 +268,6 @@ function searchQuery(element) {
     const li = ul.getElementsByTagName('li');
 
     for (let i = 0; i < li.length; i++) {
-        // if (li[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
         if (li[i].innerHTML.indexOf(filter) > -1) {
             li[i].style.display = '';
         } else {
@@ -260,7 +277,7 @@ function searchQuery(element) {
 }
 
 /*
-Change discount code to input onclick
+Builds the div structure to fit the discount code input element
 Params:
     element - (HTML Element) HTML element that was selected
  */
@@ -268,36 +285,6 @@ Params:
 function addDiscountCode(element) {
     const parent = element.parentElement;
     parent.removeChild(element);
-
-    // Build div and assign attributes
-    const input = document.createElement('input');
-    addAttributes(input, 'class', 'form-control list-input');
-    addAttributes(input, 'id', 'discountCodeInput');
-    addAttributes(input, 'type', 'text');
-    addAttributes(input, 'onfocus', 'buildPassengerBtn()');
-    addAttributes(input, 'placeholder', 'Discount code or SNCF Bon Voyage voucher');
-    // const input = '<input class="form-control list-input" id="discountCodeInput" type="text" onfocus="buildPassengerBtn()" placeholder="Discount code or SNCF Bon Voyage voucher">';
-
-    // Change styling of passenger type to fit nicely
-    document.getElementById('passengerType').style.borderBottomLeftRadius = 0;
-    document.getElementById('plusSign').style.borderBottomLeftRadius = 0;
-    document.getElementById('plusSign').style.borderBottomRightRadius = 0;
-    const userIcon = document.getElementById('userIcon');
-    addAttributes(userIcon, 'class', 'btn btn-default icon top-icon');
-
-    // Get parent div and build child divs to append discount code input
-    const parentDiv = document.getElementById('userInfo');
-    discountDivBuilder();
-}
-
-/*
-Discount div builder creates the div structure to fit the discount code input element
-Params:
-    parentDiv - (HTML Element) parent HTML element that div structure will be appended to
-    input     - (HTML Element) new input HTML element that will be appended before giving to parent div
- */
-
-function discountDivBuilder() {
     clearResultsDiv();
     const userInfoDiv = document.getElementById('userInfo');
     while (userInfoDiv.firstChild) {
@@ -330,8 +317,9 @@ function discountDivBuilder() {
     buildPassengerBtn();
 }
 
+// Builds the passenger button and adds to #resultsDiv
+
 function buildPassengerBtn() {
-    clearResultsDiv();
     setTitle('The discount will be applied to');
 
     const passengerBtn = [
@@ -342,6 +330,8 @@ function buildPassengerBtn() {
     const resultsDiv = document.getElementById('resultsDiv');
     resultsDiv.innerHTML = passengerBtn;
 }
+
+// Builds the passenger info entry buttons and adds them to #resultsDiv
 
 function getPassengerInfo() {
     const passengerDropdown = [
@@ -368,6 +358,35 @@ function getPassengerInfo() {
     const resultsList = document.getElementById('resultsDiv');
     resultsList.innerHTML = passengerDropdown;
 }
+
+
+function removeViaButton() {
+    const stationsWithoutVia = [
+        '<div class="form-group">\n' +
+            '<div class="input-group" id="beforeVia">\n' +
+                '<div class="input-group-btn">\n' +
+                    '<button class="btn btn-default icon top-icon" id="departIcon" type="button" onclick="focusElement(\'departStation\')">\n' +
+                        '<i class="fa fa-sign-out-alt"></i>\n' +
+                    '</button>\n' +
+                '</div>\n' +
+                '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart" id="departStation" onfocus="buildStationList(\'Select a departure station\')" placeholder="Enter your departure station....">\n' +
+            '</div>\n' +
+            '<div class="input-group">\n' +
+                '<div class="input-group-btn">\n' +
+                    '<button class="btn btn-default icon bottom-icon" id="returnIcon" type="button" onclick="focusElement(\'arrivalStation\')">\n' +
+                        '<i class="fa fa-sign-in-alt"></i>\n' +
+                    '</button>\n' +
+                '</div>\n' +
+                '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input arrival" id="arrivalStation" placeholder="Enter your arrival station">\n' +
+            '</div>\n' +
+        '</div>'
+    ];
+
+    const beforeVia = document.getElementById('beforeVia');
+    const parent = document.parentElement;
+}
+
+
 
 function mysteryFunction() {
     alert("Thanks for looking at my work!!!");
@@ -450,7 +469,7 @@ Cal.prototype.showMonth = function(y, m) {
 
     // Write selected month and year
     html += '<thead><tr>';
-    html += '<td colspan="7" id="tableHead">' + '<button id="btnPrev"><</button>' + this.Months[m] + ' ' + y + '<button id="btnNext">></button></td>';
+    html += '<td colspan="7" id="tableHead">' + '<button id="btnPrev" class="btn"><</button>' + this.Months[m] + ' ' + y + '<button id="btnNext" class="btn">></button></td>';
     html += '</tr></thead>';
 
 
@@ -505,7 +524,7 @@ Cal.prototype.showMonth = function(y, m) {
             }
         }
         i++;
-    }while(i <= lastDateOfMonth);
+    } while (i <= lastDateOfMonth);
 
     // Closes table
     html += '</table>';
