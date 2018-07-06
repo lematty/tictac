@@ -158,30 +158,30 @@ function buildVia() {
     const viaElement = [
     '<div class="input-group" id="beforeVia">\n' +
         '<div class="input-group-btn">\n' +
-            '<button class="btn btn-default icon top-icon" id="departIcon" type="button" onclick="focusElement(\'departStation\')">\n' +
+            '<button class="btn btn-default icon top-icon" id="departIcon" type="button" onclick="buildStationList(\'Select a departure station\')">\n' +
                 '<i class="fa fa-sign-out-alt"></i>\n' +
             '</button>\n' +
         '</div>\n' +
             '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart"\n' +
-            'id="departStation" onfocus="buildStationList(\'Select a departure station\')" placeholder="Enter your departure station....">\n' +
+            'id="departStation" onclick="buildStationList(\'Select a departure station\')" placeholder="Enter your departure station....">\n' +
         '</div>\n' +
         '<div class="input-group">\n' +
             '<div class="input-group-btn">\n' +
-                '<button class="btn btn-default icon" id="viaIcon" type="button" onclick="focusElement(\'viaStation\')">\n' +
+                '<button class="btn btn-default icon" id="viaIcon" type="button" onclick="buildStationList(\'Select a via station\')">\n' +
                     '<i class="fa fa-dot-circle"></i>\n' +
                 '</button>\n' +
             '</div>\n' +
             '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input depart"\n' +
-            'id="viaStation" onfocus="buildStationList(\'Select a via station\')" placeholder="Via">\n' +
+            'id="viaStation" onclick="buildStationList(\'Select a via station\')" placeholder="Via">\n' +
         '</div>\n' +
         '<div class="input-group">\n' +
             '<div class="input-group-btn">\n' +
-                '<button class="btn btn-default icon bottom-icon" id="returnIcon" type="button" onclick="focusElement(\'arrivalStation\')">\n' +
+                '<button class="btn btn-default icon bottom-icon" id="returnIcon" type="button" onclick="buildStationList(\'Select an arrival station\')">\n' +
                     '<i class="fa fa-sign-in-alt"></i>\n' +
                 '</button>\n' +
             '</div>\n' +
             '<input onkeyup="searchQuery(this)" type="text" class="form-control list-input arrival" id="arrivalStation"\n' +
-                'onfocus="buildStationList(\'Select an arrival station\')" placeholder="Enter your arrival station">\n' +
+                'onclick="buildStationList(\'Select an arrival station\')" placeholder="Enter your arrival station">\n' +
         '</div>\n' +
     '</div>'
     ].join('');
@@ -218,26 +218,48 @@ Params:
  */
 
 function inputSelection(element) {
-    clearResultsDiv();
+    // clearResultsDiv();
+    if (element.id === 'departStation') {
+        setTitle('Select a departure station');
+    } else if (element.id === 'viaStation') {
+        setTitle('Select a via station');
+    } else {
+        setTitle('Select an arrival station');
+    }
     let selectedCity = element.innerText;
     const addText = document.getElementById(queryInput);
     addText.value = selectedCity;
     const arrivalStation = document.getElementById('arrivalStation');
     const departStation = document.getElementById('departStation');
+    const viaStation = document.getElementById('viaStation');
+    const departCalendar = document.getElementById('departCalendar');
 
-    if (queryInput === 'departStation') {
-        arrivalStation.focus();
-        queryInput = 'arrivalStation';
-        setTitle('Select an arrival station');
-        getPopularDestinations(selectedCity);
-    } else {
-        if (arrivalStation.value) {
-            const chooseDate = document.getElementById('departCalendar');
-            chooseDate.focus();
+
+    if (viaStation) {
+        if (queryInput === departStation.id) {
+            getPopularDestinations(selectedCity);
+            viaStation.focus();
+            queryInput = 'viaStation';
+        } else if (queryInput === viaStation.id) {
+            getPopularDestinations(selectedCity);
+            arrivalStation.focus();
+            queryInput = 'arrivalStation';
         } else {
-            departStation.focus();
+            getPopularDestinations(selectedCity);
+            departCalendar.focus();
+            queryInput = 'departStation';
         }
-        queryInput = 'departStation';
+    } else {
+        if (queryInput === departStation.id) {
+            getPopularDestinations(selectedCity);
+            arrivalStation.focus();
+            queryInput = 'arrivalStation';
+        } else if (queryInput === arrivalStation.id) {
+            departCalendar.focus();
+            queryInput = 'departStation';
+        } else {
+            departCalendar.focus();
+        }
     }
 }
 
